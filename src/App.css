@@ -1,0 +1,382 @@
+#root {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Dashboard layout: F-shaped */
+.dashboard {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  min-height: 100vh;
+}
+
+.dashboard__header {
+  grid-column: 1 / -1;
+}
+
+.dashboard__header h1 {
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+}
+
+.dashboard__safety {
+  grid-column: 1 / -1;
+}
+
+.dashboard__body {
+  display: grid;
+  grid-template-columns: 40% 1fr;
+  gap: 1rem;
+  grid-column: 1 / -1;
+}
+
+.dashboard__yield {
+  min-width: 0;
+}
+
+.dashboard__valuation {
+  min-width: 0;
+}
+
+.dashboard__audit {
+  grid-column: 1 / -1;
+}
+
+/* Mobile: single column, emphasize 利差 + 风险分 */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 0.75rem;
+  }
+
+  .dashboard__body {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard__header h1 {
+    font-size: 1.25rem;
+  }
+
+  .safety-ribbon__main {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .safety-ribbon__score {
+    width: 100%;
+  }
+
+  .yield-canvas__spread {
+    font-size: 1.5rem;
+  }
+
+  .yield-canvas__chart {
+    max-height: 180px;
+  }
+
+  .valuation-sandbox__sliders {
+    margin: 0.5rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .ticker-input {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ticker-input input {
+    min-width: 0;
+  }
+
+  .yield-canvas__spread {
+    font-size: 1.75rem;
+  }
+}
+
+/* Ticker input */
+.ticker-input {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.ticker-input__row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ticker-input label {
+  font-size: 0.875rem;
+}
+
+.ticker-input input {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  min-width: 180px;
+}
+
+.ticker-input button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.ticker-input__error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  width: 100%;
+  margin: 0.25rem 0 0;
+}
+
+/* Safety ribbon */
+.safety-ribbon {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #444;
+}
+
+.safety-ribbon--safe {
+  border-left: 4px solid #22c55e;
+}
+
+.safety-ribbon--watch {
+  border-left: 4px solid #f59e0b;
+}
+
+.safety-ribbon--danger {
+  border-left: 4px solid #ef4444;
+}
+
+.safety-ribbon__main {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.safety-ribbon__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.safety-ribbon--safe .safety-ribbon__dot {
+  background: #22c55e;
+}
+
+.safety-ribbon--watch .safety-ribbon__dot {
+  background: #f59e0b;
+}
+
+.safety-ribbon--danger .safety-ribbon__dot {
+  background: #ef4444;
+}
+
+.safety-ribbon__brief {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.safety-ribbon__brief summary {
+  cursor: pointer;
+}
+
+.safety-ribbon__brief ul {
+  margin: 0.5rem 0 0 1rem;
+  padding: 0;
+}
+
+/* Yield canvas */
+.yield-canvas {
+  padding: 1rem;
+  border: 1px solid #444;
+  border-radius: 8px;
+}
+
+.yield-canvas h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.yield-canvas__chart {
+  margin-bottom: 1rem;
+}
+
+.yield-canvas__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.yield-canvas__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.yield-canvas__select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  min-width: 140px;
+  background: inherit;
+}
+
+.yield-canvas__spread {
+  font-size: 1.25rem;
+}
+
+/* Valuation sandbox */
+.valuation-sandbox {
+  padding: 1rem;
+  border: 1px solid #444;
+  border-radius: 8px;
+}
+
+.valuation-sandbox h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.valuation-sandbox__ruler {
+  margin-bottom: 0.75rem;
+}
+
+.valuation-sandbox__ruler-track {
+  position: relative;
+  height: 32px;
+  background: linear-gradient(to right, #22c55e33, #94a3b8, #ef444433);
+  border-radius: 4px;
+}
+
+.valuation-sandbox__ruler-label--left {
+  position: absolute;
+  left: 4px;
+  top: 2px;
+  font-size: 0.7rem;
+  opacity: 0.9;
+}
+
+.valuation-sandbox__ruler-label--right {
+  position: absolute;
+  right: 4px;
+  top: 2px;
+  font-size: 0.7rem;
+  opacity: 0.9;
+}
+
+.valuation-sandbox__ruler-pointer {
+  position: absolute;
+  top: -24px;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  color: #1e293b;
+}
+
+.valuation-sandbox__sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0.75rem 0;
+}
+
+.valuation-sandbox__slider-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.valuation-sandbox__slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 20px;
+}
+
+.valuation-sandbox__slider [data-radix-slider-track] {
+  flex: 1;
+  height: 6px;
+  background: #444;
+  border-radius: 3px;
+}
+
+.valuation-sandbox__slider [data-radix-slider-range] {
+  height: 100%;
+  background: #646cff;
+  border-radius: 3px;
+}
+
+.valuation-sandbox__slider [data-radix-slider-thumb] {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border: 1px solid #444;
+  border-radius: 50%;
+  cursor: grab;
+}
+
+.valuation-sandbox__slider[data-disabled] {
+  opacity: 0.6;
+}
+
+.valuation-sandbox__updating {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin: 0.25rem 0 0;
+}
+
+.valuation-sandbox__conclusion--safe {
+  background: #22c55e22;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+/* Audit trail */
+.audit-trail {
+  padding: 1rem;
+  border: 1px solid #444;
+  border-radius: 8px;
+}
+
+.audit-trail h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.audit-trail__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.audit-trail__summary h4,
+.audit-trail__sources h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+}
+
+.audit-trail ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+@media (max-width: 600px) {
+  .audit-trail__grid {
+    grid-template-columns: 1fr;
+  }
+}
