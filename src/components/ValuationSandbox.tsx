@@ -21,7 +21,7 @@ export function ValuationSandbox({
   const [g, setG] = useState(0.05);
   const [rf, setRf] = useState(0.03);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const prevValuationIdRef = useRef<string | undefined>();
+  const prevValuationIdRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     if (!valuation?.dcf_params) return;
