@@ -28,7 +28,12 @@ export function TickerInput({
     if (match) {
       return { code: match[1], exchange: match[2] as Exchange };
     }
-    return { code: ticker, exchange: "SH" as Exchange };
+    // Handle .EXCHANGE format when user selected exchange before typing code
+    const exchangeOnly = ticker.match(/^\.(SH|SZ|HK)$/);
+    if (exchangeOnly) {
+      return { code: "", exchange: exchangeOnly[1] as Exchange };
+    }
+    return { code: ticker.replace(/\D/g, ""), exchange: "SH" as Exchange };
   };
 
   const { code, exchange } = parseTicker(ticker);

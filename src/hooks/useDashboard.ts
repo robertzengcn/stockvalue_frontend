@@ -8,7 +8,7 @@ import type {
   YieldGap,
 } from "../api/types";
 
-const TICKER_REGEX = /^\d{6}\.(SH|SZ|HK)$/i;
+const TICKER_REGEX = /^\d{4,6}\.(SH|SZ|HK)$/i;
 
 const DEFAULT_DCF: DCFValuationRequest = {
   ticker: "",
