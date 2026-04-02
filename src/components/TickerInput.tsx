@@ -34,11 +34,12 @@ export function TickerInput({
   const { code, exchange } = parseTicker(ticker);
 
   const handleCodeChange = (newCode: string) => {
-    // Only append exchange if code is non-empty
-    if (newCode.trim()) {
-      onTickerChange(`${newCode}.${exchange}`);
+    // Strip non-digit characters to prevent exchange suffix accumulation
+    const digits = newCode.replace(/\D/g, "");
+    if (digits) {
+      onTickerChange(`${digits}.${exchange}`);
     } else {
-      onTickerChange(newCode);
+      onTickerChange("");
     }
   };
 

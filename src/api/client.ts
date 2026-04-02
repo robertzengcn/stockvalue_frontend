@@ -36,13 +36,15 @@ async function post<T>(path: string, body: unknown): Promise<ApiResponse<T>> {
 }
 
 export function analyzeRisk(
-  request: RiskAnalysisRequest
+  request: RiskAnalysisRequest,
 ): Promise<ApiResponse<RiskScore>> {
-  return post<RiskScore>("/api/v1/analyze/risk/", { ticker: request.ticker });
+  const body: Record<string, unknown> = { ticker: request.ticker };
+  if (request.year !== undefined) body.year = request.year;
+  return post<RiskScore>("/api/v1/analyze/risk/", body);
 }
 
 export function analyzeYield(
-  request: YieldAnalysisRequest
+  request: YieldAnalysisRequest,
 ): Promise<ApiResponse<YieldGap>> {
   return post<YieldGap>("/api/v1/analyze/yield/", {
     ticker: request.ticker,
@@ -51,7 +53,7 @@ export function analyzeYield(
 }
 
 export function analyzeDcf(
-  request: DCFValuationRequest
+  request: DCFValuationRequest,
 ): Promise<ApiResponse<ValuationResult>> {
   return post<ValuationResult>("/api/v1/analyze/dcf/", request);
 }

@@ -1,6 +1,7 @@
 import { TickerInput } from "../components/TickerInput";
 import { useDashboard } from "../hooks/useDashboard";
 import { SafetyRibbon } from "../components/SafetyRibbon";
+import { RiskAnalysisPanel } from "../components/RiskAnalysisPanel";
 import { YieldGapCanvas } from "../components/YieldGapCanvas";
 import { ValuationSandbox } from "../components/ValuationSandbox";
 import { AuditTrail } from "../components/AuditTrail";
@@ -15,9 +16,11 @@ export function Dashboard() {
     yieldData,
     valuation,
     loading,
+    riskLoading,
     dcfLoading,
     error,
     analyze,
+    analyzeRiskOnly,
     refreshDcf,
   } = useDashboard();
 
@@ -37,6 +40,10 @@ export function Dashboard() {
           error={error}
         />
       </header>
+
+      <section className="dashboard__risk-panel">
+        <RiskAnalysisPanel onAnalyze={analyzeRiskOnly} loading={riskLoading} />
+      </section>
 
       {hasResults && (
         <>

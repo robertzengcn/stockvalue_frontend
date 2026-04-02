@@ -99,6 +99,7 @@ export interface ValuationResult {
 // --- Request DTOs ---
 export interface RiskAnalysisRequest {
   ticker: string;
+  year?: number;
 }
 
 export interface YieldAnalysisRequest {

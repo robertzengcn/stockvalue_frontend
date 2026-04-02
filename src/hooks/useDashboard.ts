@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { analyzeDcf, analyzeRisk, analyzeYield } from "../api/client";
 import type {
   DCFValuationRequest,
+  RiskAnalysisRequest,
   RiskScore,
   ValuationResult,
   YieldGap,
@@ -26,9 +27,13 @@ export function useDashboard() {
   const [valuation, setValuation] = useState<ValuationResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [dcfLoading, setDcfLoading] = useState(false);
+  const [riskLoading, setRiskLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const validateTicker = useCallback((t: string) => TICKER_REGEX.test(t.trim()), []);
+  const validateTicker = useCallback(
+    (t: string) => TICKER_REGEX.test(t.trim()),
+    [],
+  );
 
   const analyze = useCallback(async () => {
     const t = ticker.trim().toUpperCase();
@@ -65,6 +70,35 @@ export function useDashboard() {
     }
   }, [ticker, costBasis]);
 
+  const analyzeRiskOnly = useCallback(
+    async (year?: number) => {
+      const t = ticker.trim().toUpperCase();
+      if (!TICKER_REGEX.test(t)) {
+        setError("请输入正确股票代码，如 600519.SH、000002.SZ、0700.HK");
+        return;
+      }
+      setError(null);
+      setRiskLoading(true);
+      try {
+        const req: RiskAnalysisRequest = { ticker: t };
+        if (year !== undefined) req.year = year;
+        const res = await analyzeRisk(req);
+        if (res.success && res.data) {
+          setRisk(res.data);
+        } else {
+          setRisk(null);
+          if (res.error) setError(res.error);
+        }
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "风险分析请求失败");
+        setRisk(null);
+      } finally {
+        setRiskLoading(false);
+      }
+    },
+    [ticker],
+  );
+
   const refreshDcf = useCallback(
     async (partial: Partial<Omit<DCFValuationRequest, "ticker">>) => {
       const t = ticker.trim().toUpperCase();
@@ -91,7 +125,7 @@ export function useDashboard() {
         setDcfLoading(false);
       }
     },
-    [ticker, valuation?.dcf_params]
+    [ticker, valuation?.dcf_params],
   );
 
   return {
@@ -103,10 +137,12 @@ export function useDashboard() {
     yieldData,
     valuation,
     loading,
+    riskLoading,
     dcfLoading,
     error,
     validateTicker,
     analyze,
+    analyzeRiskOnly,
     refreshDcf,
   };
 }

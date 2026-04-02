@@ -218,6 +218,57 @@
   display: inline;
 }
 
+/* Risk analysis panel */
+.risk-panel {
+  padding: 0.75rem 1rem;
+  border: 1px solid #444;
+  border-radius: 8px;
+}
+
+.risk-panel h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.risk-panel__controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.risk-panel__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.risk-panel__field label {
+  font-size: 0.875rem;
+}
+
+.risk-panel__field input {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  min-width: 160px;
+}
+
+.risk-panel__btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.risk-panel__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dashboard__risk-panel {
+  grid-column: 1 / -1;
+}
+
 /* Safety ribbon */
 .safety-ribbon {
   padding: 0.75rem 1rem;
