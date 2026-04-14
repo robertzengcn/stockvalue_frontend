@@ -132,7 +132,12 @@ export function TickerInput({
           disabled={loading}
         />
       </div>
-      <button type="submit" disabled={loading}>
+      <button
+        type="submit"
+        disabled={loading}
+        className={loading ? "ticker-input__btn--loading" : ""}
+      >
+        {loading && <span className="ticker-input__spinner" aria-hidden />}
         {loading ? "分析中…" : "分析"}
       </button>
       {error && (

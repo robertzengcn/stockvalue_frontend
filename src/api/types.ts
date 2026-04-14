@@ -33,6 +33,18 @@ export interface MScoreData {
   tata: number;
 }
 
+export interface FScoreData {
+  positive_roa: boolean;
+  positive_cfo: boolean;
+  improving_roa: boolean;
+  cfo_exceeds_roa: boolean;
+  lower_leverage: boolean;
+  higher_liquidity: boolean;
+  no_new_shares: boolean;
+  improving_margin: boolean;
+  improving_turnover: boolean;
+}
+
 export interface RiskScore {
   ticker: string;
   report_id: string;
@@ -41,6 +53,8 @@ export interface RiskScore {
   calculated_at: string;
   m_score: number;
   mscore_data: MScoreData;
+  f_score: number;
+  fscore_data: FScoreData;
   /** High cash + high debt flag (存贷双高) */
   存贷双高: boolean;
   cash_amount: number;
@@ -56,10 +70,17 @@ export interface RiskScore {
 }
 
 // --- Yield ---
+export interface YieldNarrative {
+  summary: string;
+  bullets: string[];
+  generated_at: string;
+  llm_provider: string;
+}
+
 export interface YieldGap {
   ticker: string;
-  cost_basis: number;
-  current_price: number;
+  cost_basis: string | number;
+  current_price: string | number;
   gross_dividend_yield: number;
   net_dividend_yield: number;
   risk_free_bond_rate: number;
@@ -69,6 +90,7 @@ export interface YieldGap {
   market: Market;
   analysis_id: string;
   calculated_at: string;
+  narrative?: YieldNarrative;
 }
 
 // --- Valuation (DCF) ---
@@ -85,6 +107,7 @@ export interface DCFParams {
 
 export interface ValuationResult {
   ticker: string;
+  stock_name?: string;
   current_price: number;
   intrinsic_value: number;
   wacc: number;
@@ -94,6 +117,28 @@ export interface ValuationResult {
   calculated_at: string;
   dcf_params: DCFParams;
   audit_trail: Record<string, unknown>;
+}
+
+// --- DCF Explanation ---
+export interface DCFExplanation {
+  step_by_step: string;
+  data_inputs: string;
+  wacc_explanation: string;
+  fcf_analysis: string;
+  reliability: string;
+  conclusion: string;
+  generated_at: string;
+  llm_provider: string;
+}
+
+export interface DCFExplanationResponse {
+  valuation_id: string;
+  ticker: string;
+  stock_name?: string;
+  current_price: number;
+  intrinsic_value: number;
+  valuation_level: ValuationLevel;
+  explanation: DCFExplanation | null;
 }
 
 // --- Request DTOs ---
@@ -117,4 +162,8 @@ export interface DCFValuationRequest {
   risk_free_rate?: number;
   beta?: number;
   market_risk_premium?: number;
+}
+
+export interface DCFExplanationRequest {
+  valuation_id: string;
 }

@@ -5,6 +5,8 @@
 
 import type {
   ApiResponse,
+  DCFExplanationRequest,
+  DCFExplanationResponse,
   DCFValuationRequest,
   RiskAnalysisRequest,
   RiskScore,
@@ -56,4 +58,10 @@ export function analyzeDcf(
   request: DCFValuationRequest,
 ): Promise<ApiResponse<ValuationResult>> {
   return post<ValuationResult>("/api/v1/analyze/dcf/", request);
+}
+
+export function explainDcf(
+  request: DCFExplanationRequest,
+): Promise<ApiResponse<DCFExplanationResponse>> {
+  return post<DCFExplanationResponse>("/api/v1/analyze/dcf/explain", request);
 }

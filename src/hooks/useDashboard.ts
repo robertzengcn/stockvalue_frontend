@@ -136,6 +136,7 @@ export function useDashboard() {
     risk,
     yieldData,
     valuation,
+    stockName: valuation?.stock_name ?? null,
     loading,
     riskLoading,
     dcfLoading,

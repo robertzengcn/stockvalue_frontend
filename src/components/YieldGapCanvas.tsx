@@ -42,11 +42,12 @@ export function YieldGapCanvas({ yieldData }: YieldGapCanvasProps) {
         ? fiveYRate
         : depositRate;
   const spread = displayNetYield - benchmarkRate;
-  const spreadStr = spread >= 0 ? `+${spread.toFixed(2)}%` : `${spread.toFixed(2)}%`;
+  const spreadStr =
+    spread >= 0 ? `+${spread.toFixed(2)}%` : `${spread.toFixed(2)}%`;
 
   const months = Array.from({ length: 12 }, (_, i) => ({
     month: `${i + 1}月`,
-    "净股息率": yieldData.net_dividend_yield * 100,
+    净股息率: yieldData.net_dividend_yield * 100,
     "10年国债": bondRate,
     "3年大额存单": depositRate,
   }));
@@ -93,21 +94,68 @@ export function YieldGapCanvas({ yieldData }: YieldGapCanvasProps) {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis tickFormatter={(v) => `${v}%`} />
-            <Tooltip formatter={(v: unknown) => (typeof v === "number" ? `${v.toFixed(2)}%` : String(v))} />
+            <Tooltip
+              formatter={(v: unknown) =>
+                typeof v === "number" ? `${v.toFixed(2)}%` : String(v)
+              }
+            />
             <Legend />
-            <Line type="monotone" dataKey="净股息率" stroke="#22c55e" strokeWidth={2} />
-            <Line type="monotone" dataKey="10年国债" stroke="#3b82f6" strokeWidth={2} />
-            <Line type="monotone" dataKey="3年大额存单" stroke="#f59e0b" strokeWidth={2} />
+            <Line
+              type="monotone"
+              dataKey="净股息率"
+              stroke="#22c55e"
+              strokeWidth={2}
+            />
+            <Line
+              type="monotone"
+              dataKey="10年国债"
+              stroke="#3b82f6"
+              strokeWidth={2}
+            />
+            <Line
+              type="monotone"
+              dataKey="3年大额存单"
+              stroke="#f59e0b"
+              strokeWidth={2}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
       <div className="yield-canvas__panel">
         <p>
-          当前净股息率{ taxContext === "native" && yieldData.market === "HK_SHARE" ? "（原生账户）" : "" }: <strong>{netPct}%</strong>
+          当前净股息率
+          {taxContext === "native" && yieldData.market === "HK_SHARE"
+            ? "（原生账户）"
+            : ""}
+          : <strong>{netPct}%</strong>
         </p>
-        <p className="yield-canvas__spread">超额收益 (Spread): <strong>{spreadStr}</strong></p>
-        <p>10年国债: {bondRate.toFixed(2)}% · 3年大额存单: {depositRate.toFixed(2)}%</p>
+        <p className="yield-canvas__spread">
+          超额收益 (Spread): <strong>{spreadStr}</strong>
+        </p>
+        <p>
+          10年国债: {bondRate.toFixed(2)}% · 3年大额存单:{" "}
+          {depositRate.toFixed(2)}%
+        </p>
       </div>
+      {yieldData.narrative && (
+        <div className="yield-canvas__narrative">
+          <h4>AI 分析摘要</h4>
+          <p className="yield-canvas__narrative-summary">
+            {yieldData.narrative.summary}
+          </p>
+          {(yieldData.narrative.bullets?.length ?? 0) > 0 && (
+            <ul className="yield-canvas__narrative-bullets">
+              {yieldData.narrative.bullets.map((b, i) => (
+                <li key={i}>{b}</li>
+              ))}
+            </ul>
+          )}
+          <p className="yield-canvas__narrative-meta">
+            由 {yieldData.narrative.llm_provider} 生成 ·{" "}
+            {new Date(yieldData.narrative.generated_at).toLocaleString("zh-CN")}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

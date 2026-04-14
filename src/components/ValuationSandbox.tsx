@@ -1,6 +1,17 @@
-import { useEffect, useRef, useState, startTransition } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  startTransition,
+  useCallback,
+} from "react";
 import * as Slider from "@radix-ui/react-slider";
-import type { DCFValuationRequest, ValuationResult } from "../api/types";
+import { explainDcf } from "../api/client";
+import type {
+  DCFExplanation,
+  DCFValuationRequest,
+  ValuationResult,
+} from "../api/types";
 
 interface ValuationSandboxProps {
   ticker: string;
@@ -22,6 +33,16 @@ export function ValuationSandbox({
   const [rf, setRf] = useState(0.03);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevValuationIdRef = useRef<string | undefined>(undefined);
+
+  const [explanation, setExplanation] = useState<DCFExplanation | null>(null);
+  const [explainLoading, setExplainLoading] = useState(false);
+  const [explainError, setExplainError] = useState<string | null>(null);
+
+  // Reset explanation when valuation changes
+  useEffect(() => {
+    setExplanation(null);
+    setExplainError(null);
+  }, [valuation?.valuation_id]);
 
   useEffect(() => {
     if (!valuation?.dcf_params) return;
@@ -47,6 +68,24 @@ export function ValuationSandbox({
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [g, rf, valuation, onParamsChange]);
+
+  const handleExplain = useCallback(async () => {
+    if (!valuation) return;
+    setExplainLoading(true);
+    setExplainError(null);
+    try {
+      const res = await explainDcf({ valuation_id: valuation.valuation_id });
+      if (res.success && res.data) {
+        setExplanation(res.data.explanation);
+      } else {
+        setExplainError(res.error ?? "获取解释失败");
+      }
+    } catch (e) {
+      setExplainError(e instanceof Error ? e.message : "请求失败");
+    } finally {
+      setExplainLoading(false);
+    }
+  }, [valuation]);
 
   if (!valuation) return <div className="valuation-sandbox">暂无估值数据</div>;
 
@@ -132,6 +171,55 @@ export function ValuationSandbox({
         WACC: {(valuation.wacc * 100).toFixed(2)}% · 估值水平:{" "}
         {valuation.valuation_level}
       </p>
+
+      <div className="valuation-sandbox__explain-section">
+        <button
+          className="valuation-sandbox__explain-btn"
+          onClick={handleExplain}
+          disabled={explainLoading || dcfLoading}
+        >
+          {explainLoading && <span className="valuation-sandbox__spinner" />}
+          {explainLoading ? "AI 分析中…" : "AI 解读估值逻辑"}
+        </button>
+
+        {explainError && (
+          <p className="valuation-sandbox__explain-error">{explainError}</p>
+        )}
+
+        {explanation && (
+          <div className="valuation-sandbox__explain-panel">
+            <h4>估值计算解读</h4>
+            <section>
+              <h5>数据输入</h5>
+              <p>{explanation.data_inputs}</p>
+            </section>
+            <section>
+              <h5>WACC 推导</h5>
+              <p>{explanation.wacc_explanation}</p>
+            </section>
+            <section>
+              <h5>FCF 分析</h5>
+              <p>{explanation.fcf_analysis}</p>
+            </section>
+            <section>
+              <h5>逐步计算</h5>
+              <p>{explanation.step_by_step}</p>
+            </section>
+            <section>
+              <h5>可靠性评估</h5>
+              <p>{explanation.reliability}</p>
+            </section>
+            <section>
+              <h5>结论</h5>
+              <p>{explanation.conclusion}</p>
+            </section>
+            <p className="valuation-sandbox__explain-meta">
+              由 {explanation.llm_provider} 生成 ·{" "}
+              {new Date(explanation.generated_at).toLocaleString("zh-CN")}
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

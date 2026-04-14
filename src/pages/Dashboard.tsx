@@ -15,6 +15,7 @@ export function Dashboard() {
     risk,
     yieldData,
     valuation,
+    stockName,
     loading,
     riskLoading,
     dcfLoading,
@@ -30,6 +31,9 @@ export function Dashboard() {
     <div className="dashboard">
       <header className="dashboard__header">
         <h1>价值投资决策看板</h1>
+        {stockName && (
+          <span className="dashboard__stock-name">{stockName}</span>
+        )}
         <TickerInput
           ticker={ticker}
           onTickerChange={setTicker}
