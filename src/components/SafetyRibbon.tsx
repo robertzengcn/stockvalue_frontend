@@ -261,6 +261,37 @@ export function SafetyRibbon({ ticker, risk }: SafetyRibbonProps) {
           存贷双高: {risk.存贷双高 ? "是" : "否"} · 商誉/权益:{" "}
           {(risk.goodwill_ratio * 100).toFixed(1)}%
         </p>
+        <p>
+          现金增长: {(risk.cash_growth_rate * 100).toFixed(1)}% · 负债增长:{" "}
+          {(risk.debt_growth_rate * 100).toFixed(1)}%
+        </p>
+        <p>
+          利润增长: {(risk.profit_growth * 100).toFixed(1)}% · 经营现金流增长:{" "}
+          {(risk.ocf_growth * 100).toFixed(1)}%
+        </p>
+        <p>
+          商誉偏高: {risk.goodwill_excessive ? "是" : "否"} · 利润现金背离:{" "}
+          {risk.profit_cash_divergence ? "是" : "否"}
+        </p>
+        {risk.narrative && (
+          <div className="safety-ribbon__narrative">
+            <p>{risk.narrative.summary}</p>
+            {(risk.narrative.key_drivers?.length ?? 0) > 0 && (
+              <ul>
+                {risk.narrative.key_drivers.map((driver, idx) => (
+                  <li key={idx}>{driver}</li>
+                ))}
+              </ul>
+            )}
+            {(risk.narrative.risks?.length ?? 0) > 0 && (
+              <ul className="safety-ribbon__narrative-risks">
+                {risk.narrative.risks.map((riskItem, idx) => (
+                  <li key={idx}>{riskItem}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </details>
       <details className="safety-ribbon__fscore-detail">
         <summary>F-Score 拆解（Piotroski 9项基本面评分）</summary>

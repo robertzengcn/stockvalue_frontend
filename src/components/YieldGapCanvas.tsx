@@ -143,10 +143,17 @@ export function YieldGapCanvas({ yieldData }: YieldGapCanvasProps) {
           <p className="yield-canvas__narrative-summary">
             {yieldData.narrative.summary}
           </p>
-          {(yieldData.narrative.bullets?.length ?? 0) > 0 && (
+          {(yieldData.narrative.key_drivers?.length ?? 0) > 0 && (
             <ul className="yield-canvas__narrative-bullets">
-              {yieldData.narrative.bullets.map((b, i) => (
+              {yieldData.narrative.key_drivers.map((b, i) => (
                 <li key={i}>{b}</li>
+              ))}
+            </ul>
+          )}
+          {(yieldData.narrative.risks?.length ?? 0) > 0 && (
+            <ul className="yield-canvas__narrative-risks">
+              {yieldData.narrative.risks.map((r, i) => (
+                <li key={i}>{r}</li>
               ))}
             </ul>
           )}

@@ -7,7 +7,23 @@ export interface ApiResponse<T> {
   success: boolean;
   data: T | null;
   error: string | null;
-  meta?: { total?: number; page?: number; limit?: number };
+  meta?: ApiMeta | null;
+}
+
+export interface ApiMeta {
+  total?: number;
+  page?: number;
+  limit?: number;
+  document_context?: DocumentContextChunk[] | null;
+}
+
+export interface DocumentContextChunk {
+  chunk_id: string;
+  content: string;
+  parent_content?: string | null;
+  page_number?: number | null;
+  section?: string | null;
+  score?: number | null;
 }
 
 // --- Enums (match backend) ---
@@ -21,6 +37,14 @@ export type ValuationLevel =
   | "SIGNIFICANTLY_OVERVALUED";
 export type Market = "A_SHARE" | "HK_SHARE";
 
+export interface AnalysisNarrative {
+  summary: string;
+  key_drivers: string[];
+  risks: string[];
+  generated_at: string;
+  llm_provider: string;
+}
+
 // --- Risk ---
 export interface MScoreData {
   dsri: number;
@@ -31,6 +55,16 @@ export interface MScoreData {
   sgai: number;
   lvgi: number;
   tata: number;
+  audit_trail?: Record<string, IndexAuditDetail>;
+}
+
+export interface IndexAuditDetail {
+  value: number;
+  numerator: number;
+  denominator: number;
+  source_fields: Record<string, string>;
+  non_calculable: boolean;
+  reason?: string | null;
 }
 
 export interface FScoreData {
@@ -67,16 +101,10 @@ export interface RiskScore {
   profit_growth: number;
   ocf_growth: number;
   red_flags: string[];
+  narrative?: AnalysisNarrative | null;
 }
 
 // --- Yield ---
-export interface YieldNarrative {
-  summary: string;
-  bullets: string[];
-  generated_at: string;
-  llm_provider: string;
-}
-
 export interface YieldGap {
   ticker: string;
   cost_basis: string | number;
@@ -90,7 +118,7 @@ export interface YieldGap {
   market: Market;
   analysis_id: string;
   calculated_at: string;
-  narrative?: YieldNarrative;
+  narrative?: AnalysisNarrative | null;
 }
 
 // --- Valuation (DCF) ---
@@ -117,6 +145,7 @@ export interface ValuationResult {
   calculated_at: string;
   dcf_params: DCFParams;
   audit_trail: Record<string, unknown>;
+  narrative?: AnalysisNarrative | null;
 }
 
 // --- DCF Explanation ---
@@ -145,6 +174,7 @@ export interface DCFExplanationResponse {
 export interface RiskAnalysisRequest {
   ticker: string;
   year?: number;
+  document_ids?: string[];
 }
 
 export interface YieldAnalysisRequest {
@@ -162,8 +192,21 @@ export interface DCFValuationRequest {
   risk_free_rate?: number;
   beta?: number;
   market_risk_premium?: number;
+  document_ids?: string[];
 }
 
 export interface DCFExplanationRequest {
   valuation_id: string;
+}
+
+// --- Document Upload ---
+export interface DocumentUploadResponse {
+  document_id: string;
+  filename: string;
+  file_type: string;
+  file_size: number;
+  ticker?: string;
+  stock_name?: string;
+  uploaded_at: string;
+  status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
 }

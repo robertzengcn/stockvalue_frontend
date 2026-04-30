@@ -171,6 +171,26 @@ export function ValuationSandbox({
         WACC: {(valuation.wacc * 100).toFixed(2)}% · 估值水平:{" "}
         {valuation.valuation_level}
       </p>
+      {valuation.narrative && (
+        <div className="valuation-sandbox__narrative">
+          <h4>AI 估值摘要</h4>
+          <p>{valuation.narrative.summary}</p>
+          {(valuation.narrative.key_drivers?.length ?? 0) > 0 && (
+            <ul>
+              {valuation.narrative.key_drivers.map((driver, idx) => (
+                <li key={idx}>{driver}</li>
+              ))}
+            </ul>
+          )}
+          {(valuation.narrative.risks?.length ?? 0) > 0 && (
+            <ul className="valuation-sandbox__narrative-risks">
+              {valuation.narrative.risks.map((risk, idx) => (
+                <li key={idx}>{risk}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       <div className="valuation-sandbox__explain-section">
         <button

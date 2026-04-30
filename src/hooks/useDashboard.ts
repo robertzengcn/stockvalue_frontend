@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { analyzeDcf, analyzeRisk, analyzeYield } from "../api/client";
 import type {
   DCFValuationRequest,
+  DocumentContextChunk,
   RiskAnalysisRequest,
   RiskScore,
   ValuationResult,
@@ -25,6 +26,12 @@ export function useDashboard() {
   const [risk, setRisk] = useState<RiskScore | null>(null);
   const [yieldData, setYieldData] = useState<YieldGap | null>(null);
   const [valuation, setValuation] = useState<ValuationResult | null>(null);
+  const [riskDocContext, setRiskDocContext] = useState<DocumentContextChunk[]>(
+    [],
+  );
+  const [dcfDocContext, setDcfDocContext] = useState<DocumentContextChunk[]>(
+    [],
+  );
   const [loading, setLoading] = useState(false);
   const [dcfLoading, setDcfLoading] = useState(false);
   const [riskLoading, setRiskLoading] = useState(false);
@@ -54,10 +61,12 @@ export function useDashboard() {
       ]);
       if (riskRes.success && riskRes.data) setRisk(riskRes.data);
       else setRisk(null);
+      setRiskDocContext(riskRes.meta?.document_context ?? []);
       if (yieldRes.success && yieldRes.data) setYieldData(yieldRes.data);
       else setYieldData(null);
       if (dcfRes.success && dcfRes.data) setValuation(dcfRes.data);
       else setValuation(null);
+      setDcfDocContext(dcfRes.meta?.document_context ?? []);
       const err = riskRes.error ?? yieldRes.error ?? dcfRes.error;
       if (err) setError(err);
     } catch (e) {
@@ -65,6 +74,8 @@ export function useDashboard() {
       setRisk(null);
       setYieldData(null);
       setValuation(null);
+      setRiskDocContext([]);
+      setDcfDocContext([]);
     } finally {
       setLoading(false);
     }
@@ -85,13 +96,16 @@ export function useDashboard() {
         const res = await analyzeRisk(req);
         if (res.success && res.data) {
           setRisk(res.data);
+          setRiskDocContext(res.meta?.document_context ?? []);
         } else {
           setRisk(null);
+          setRiskDocContext([]);
           if (res.error) setError(res.error);
         }
       } catch (e) {
         setError(e instanceof Error ? e.message : "风险分析请求失败");
         setRisk(null);
+        setRiskDocContext([]);
       } finally {
         setRiskLoading(false);
       }
@@ -120,7 +134,10 @@ export function useDashboard() {
       setDcfLoading(true);
       try {
         const res = await analyzeDcf(next);
-        if (res.success && res.data) setValuation(res.data);
+        if (res.success && res.data) {
+          setValuation(res.data);
+          setDcfDocContext(res.meta?.document_context ?? []);
+        }
       } finally {
         setDcfLoading(false);
       }
@@ -136,6 +153,8 @@ export function useDashboard() {
     risk,
     yieldData,
     valuation,
+    riskDocContext,
+    dcfDocContext,
     stockName: valuation?.stock_name ?? null,
     loading,
     riskLoading,

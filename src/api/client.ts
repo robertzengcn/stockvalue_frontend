@@ -8,6 +8,7 @@ import type {
   DCFExplanationRequest,
   DCFExplanationResponse,
   DCFValuationRequest,
+  DocumentUploadResponse,
   RiskAnalysisRequest,
   RiskScore,
   ValuationResult,
@@ -42,6 +43,7 @@ export function analyzeRisk(
 ): Promise<ApiResponse<RiskScore>> {
   const body: Record<string, unknown> = { ticker: request.ticker };
   if (request.year !== undefined) body.year = request.year;
+  if (request.document_ids?.length) body.document_ids = request.document_ids;
   return post<RiskScore>("/api/v1/analyze/risk/", body);
 }
 
@@ -64,4 +66,36 @@ export function explainDcf(
   request: DCFExplanationRequest,
 ): Promise<ApiResponse<DCFExplanationResponse>> {
   return post<DCFExplanationResponse>("/api/v1/analyze/dcf/explain", request);
+}
+
+/**
+ * Upload a PDF document (e.g., annual report) to the backend.
+ * Uses FormData for file upload (multipart/form-data).
+ */
+export async function uploadDocument(
+  file: File,
+  ticker?: string,
+): Promise<ApiResponse<DocumentUploadResponse>> {
+  const formData = new FormData();
+  formData.append("file", file);
+  if (ticker) {
+    formData.append("ticker", ticker);
+  }
+
+  const res = await fetch(`${BASE_URL}/api/v1/documents/upload`, {
+    method: "POST",
+    body: formData,
+    // Note: Do NOT set Content-Type header; browser will set it with boundary
+  });
+
+  const data = (await res.json()) as ApiResponse<DocumentUploadResponse>;
+  if (!res.ok) {
+    return {
+      success: false,
+      data: null,
+      error: data.error ?? `HTTP ${res.status}`,
+      meta: data.meta,
+    };
+  }
+  return data;
 }
